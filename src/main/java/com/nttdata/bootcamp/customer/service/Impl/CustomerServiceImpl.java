@@ -26,7 +26,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Mono<Customer> findByDni(String dni) {
-        customerRepository.findAll().filter(x -> x.getDni().equals(dni)).subscribe(System.out::println);
         return customerRepository
                 .findAll()
                 .filter(x -> x.getDni().equals(dni))

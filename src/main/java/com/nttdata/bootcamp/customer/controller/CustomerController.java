@@ -4,39 +4,41 @@ import com.nttdata.bootcamp.customer.entity.dto.BusinessCustomerDto;
 import com.nttdata.bootcamp.customer.entity.dto.PersonalCustomerDto;
 import com.nttdata.bootcamp.customer.util.Constant;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import com.nttdata.bootcamp.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.nttdata.bootcamp.customer.entity.Customer;
+import org.webjars.NotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.Date;
 
-@CrossOrigin(origins = "*")
+@Slf4j
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/customer")
 public class CustomerController {
-    //test
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerController.class);
+
     @Autowired
     private CustomerService customerService;
 
     //Customer search
     @GetMapping("/")
-    public Flux<Customer> findAllCustomers() {
-        Flux<Customer> customers = customerService.findAll();
-        LOGGER.info("Registered Customers: " + customers);
-        return customers;
+    public ResponseEntity<Flux<Customer>> findAll(){
+        return ResponseEntity.ok(customerService.findAll()
+                .doOnError(throwable -> log.error("Error occurred while getting all customers", throwable)));
     }
 
     //Search for clients by DNI
     @GetMapping("/findByClient/{dni}")
-    public Mono<Customer> findByClientDNI(@PathVariable("dni") String dni) {
-        LOGGER.info("Searching client by DNI: " + dni);
-        return customerService.findByDni(dni);
+    public Mono<ResponseEntity<Customer>> findByClientDNI(@PathVariable("dni") String dni) {
+        return customerService.findByDni(dni)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build())
+                .doOnError(error -> log.info("Error finding customer with DNI: {} - {}",dni ,error.getMessage()))
+                .doOnNext(response -> log.info(response.getBody() == null ? "No customer found with DNI: " + dni : "Customer found with DNI: " + dni));
     }
 
     //Save personal customer
@@ -56,7 +58,7 @@ public class CustomerController {
                     t.setCreationDate(new Date());
                     t.setModificationDate(new Date());
                 }).onErrorReturn(dataCustomer).onErrorResume(e -> Mono.just(dataCustomer))
-                .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
+                .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> log.info(x.toString()));
 
         Mono<Customer> newCustomer = customerService.save(dataCustomer);
         if(newCustomer == null){
@@ -82,7 +84,7 @@ public class CustomerController {
                     t.setCreationDate(new Date());
                     t.setModificationDate(new Date());
                 }).onErrorReturn(dataCustomer).onErrorResume(e -> Mono.just(dataCustomer))
-                .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
+                .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> log.info(x.toString()));
 
         Mono<Customer> newCustomer = customerService.save(dataCustomer);
         if(newCustomer != null){
@@ -94,7 +96,7 @@ public class CustomerController {
     //Delete customer
     @DeleteMapping("/delete/{dni}")
     public ResponseEntity<Mono<Void>> deleteCustomer(@PathVariable("dni") String dni) {
-        LOGGER.info("Deleting client by DNI: " + dni);
+        log.info("Deleting client by DNI: " + dni);
         Mono<Void> deleteCustomer = customerService.delete(dni);
         return ResponseEntity.noContent().build();
     }
