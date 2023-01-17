@@ -12,7 +12,11 @@ import reactor.core.publisher.Mono;
 @Service
 public class CustomerServiceImpl implements CustomerService {
     @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     @Override
     public Flux<Customer> findAll() {
@@ -22,22 +26,21 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Mono<Customer> findByDni(String dni) {
-        Mono<Customer> customer = Mono.empty();
-
-        customer = customerRepository
+        customerRepository.findAll().filter(x -> x.getDni().equals(dni)).subscribe(System.out::println);
+        return customerRepository
                 .findAll()
                 .filter(x -> x.getDni().equals(dni))
                 .next();
-
-        return customer;
     }
 
     @Override
     public Mono<Customer> save(Customer dataCustomer) {
-        Mono<Customer> customerMono = findByDni(dataCustomer.getDni())
-
-                .switchIfEmpty(customerRepository.save(dataCustomer));
-        return customerMono;
+        return findByDni(dataCustomer.getDni())
+                .hasElement()
+                .flatMap(exist -> {
+                    if(exist) return Mono.error(new Exception("There already exists a customer with that ID number"));
+                    else return customerRepository.save(dataCustomer);
+                });
     }
 
     @Override

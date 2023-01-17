@@ -3,6 +3,7 @@ package com.nttdata.bootcamp.customer.controller;
 import com.nttdata.bootcamp.customer.entity.dto.BusinessCustomerDto;
 import com.nttdata.bootcamp.customer.entity.dto.PersonalCustomerDto;
 import com.nttdata.bootcamp.customer.util.Constant;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.nttdata.bootcamp.customer.service.CustomerService;
@@ -40,7 +41,7 @@ public class CustomerController {
 
     //Save personal customer
     @PostMapping(value = "/savePersonalCustomer")
-    public Mono<Customer> savePersonalCustomer(@RequestBody PersonalCustomerDto customer){
+    public Mono<Customer> savePersonalCustomer(@RequestBody @Valid PersonalCustomerDto customer){
 
         Customer dataCustomer = new Customer();
         Mono.just(dataCustomer).doOnNext(t -> {
@@ -58,8 +59,8 @@ public class CustomerController {
                 .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
 
         Mono<Customer> newCustomer = customerService.save(dataCustomer);
-        if(newCustomer != null){
-            customerService.saveInitServices(newCustomer.block());
+        if(newCustomer == null){
+            return null;
         }
         return newCustomer;
     }
