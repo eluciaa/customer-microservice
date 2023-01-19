@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.nttdata.bootcamp.customer.entity.Customer;
-import org.webjars.NotFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
 import java.util.Date;
 
 @Slf4j
@@ -26,24 +26,21 @@ public class CustomerController {
 
     //Customer search
     @GetMapping("/")
-    public ResponseEntity<Flux<Customer>> findAll(){
-        return ResponseEntity.ok(customerService.findAll()
-                .doOnError(throwable -> log.error("Error occurred while getting all customers", throwable)));
+    public Flux<Customer> findAll() {
+        return customerService.findAll();
     }
 
-    //Search for clients by DNI
-    @GetMapping("/findByClient/{dni}")
-    public Mono<ResponseEntity<Customer>> findByClientDNI(@PathVariable("dni") String dni) {
+    //Search for customers by DNI
+    @GetMapping("/find/{dni}")
+    public Mono<ResponseEntity<Customer>> findByCustomerDNI(@PathVariable("dni") String dni) {
         return customerService.findByDni(dni)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build())
-                .doOnError(error -> log.info("Error finding customer with DNI: {} - {}",dni ,error.getMessage()))
-                .doOnNext(response -> log.info(response.getBody() == null ? "No customer found with DNI: " + dni : "Customer found with DNI: " + dni));
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     //Save personal customer
     @PostMapping(value = "/savePersonalCustomer")
-    public Mono<Customer> savePersonalCustomer(@RequestBody @Valid PersonalCustomerDto customer){
+    public Mono<ResponseEntity<Customer>> savePersonalCustomer(@RequestBody @Valid PersonalCustomerDto customer) {
 
         Customer dataCustomer = new Customer();
         Mono.just(dataCustomer).doOnNext(t -> {
@@ -60,16 +57,14 @@ public class CustomerController {
                 }).onErrorReturn(dataCustomer).onErrorResume(e -> Mono.just(dataCustomer))
                 .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> log.info(x.toString()));
 
-        Mono<Customer> newCustomer = customerService.save(dataCustomer);
-        if(newCustomer == null){
-            return null;
-        }
-        return newCustomer;
+        return customerService.save(dataCustomer)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
     //Save business customer
     @PostMapping(value = "/saveBusinessCustomer")
-    public Mono<Customer> saveBusinessCustomer(@RequestBody BusinessCustomerDto customer){
+    public Mono<Customer> saveBusinessCustomer(@RequestBody BusinessCustomerDto customer) {
 
         Customer dataCustomer = new Customer();
         Mono.just(dataCustomer).doOnNext(t -> {
@@ -87,7 +82,7 @@ public class CustomerController {
                 .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> log.info(x.toString()));
 
         Mono<Customer> newCustomer = customerService.save(dataCustomer);
-        if(newCustomer != null){
+        if (newCustomer != null) {
             customerService.saveInitServices(newCustomer.block());
         }
         return newCustomer;

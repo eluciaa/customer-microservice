@@ -3,12 +3,15 @@ package com.nttdata.bootcamp.customer.service.Impl;
 import com.nttdata.bootcamp.customer.entity.Customer;
 import com.nttdata.bootcamp.customer.repository.CustomerRepository;
 import com.nttdata.bootcamp.customer.service.CustomerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-//Service implementation
+import java.util.Objects;
+
+@Slf4j
 @Service
 public class CustomerServiceImpl implements CustomerService {
     @Autowired
@@ -20,15 +23,25 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Flux<Customer> findAll() {
-        Flux<Customer> customers = customerRepository.findAll();
-        return customers;
+        return customerRepository.findAll()
+                .doOnError(throwable -> log.error("Error occurred while getting all customers", throwable))
+                .count()
+                .filter(count -> {
+                    if (count <= 0) {
+                        log.info("No customers found");
+                        return false;
+                    }
+                    return true;
+                })
+                .flatMapMany(count -> customerRepository.findAll());
     }
 
     @Override
     public Mono<Customer> findByDni(String dni) {
-        return customerRepository
-                .findAll()
+        return customerRepository.findAll()
+                .doOnError(throwable -> log.error("Error occurred while find customer", throwable))
                 .filter(x -> x.getDni().equals(dni))
+                .doOnComplete(() -> log.info("No customer found with DNI: " + dni))
                 .next();
     }
 
@@ -36,16 +49,12 @@ public class CustomerServiceImpl implements CustomerService {
     public Mono<Customer> save(Customer dataCustomer) {
         return findByDni(dataCustomer.getDni())
                 .hasElement()
-                .flatMap(exist -> {
-                    if(exist) return Mono.error(new Exception("There already exists a customer with that ID number"));
-                    else return customerRepository.save(dataCustomer);
-                });
+                .flatMap(exist -> exist ? Mono.empty() : customerRepository.save(dataCustomer));
     }
 
     @Override
     public Mono<Customer> updateAddress(Customer dataCustomer) {
         Mono<Customer> customerMono = findByDni(dataCustomer.getDni());
-        //.delayElement(Duration.ofMillis(1000));
         try {
             Customer customer = customerMono.block();
             assert customer != null;
@@ -60,7 +69,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Mono<Customer> updateStatus(Customer dataCustomer) {
         Mono<Customer> customerMono = findByDni(dataCustomer.getDni());
-        //.delayElement(Duration.ofMillis(1000));
         try {
             Customer customer = customerMono.block();
             assert customer != null;
