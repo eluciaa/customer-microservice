@@ -82,9 +82,7 @@ public class CustomerController {
                 .onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> log.info(x.toString()));
 
         Mono<Customer> newCustomer = customerService.save(dataCustomer);
-        if (newCustomer != null) {
-            customerService.saveInitServices(newCustomer.block());
-        }
+
         return newCustomer;
     }
 

@@ -24,4 +24,5 @@ public class PersonalCustomerDto {
 
     @NotBlank(message = "Address is mandatory")
     private String address;
+
 }

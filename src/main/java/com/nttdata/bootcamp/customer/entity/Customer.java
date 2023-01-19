@@ -25,29 +25,29 @@ public class Customer {
     @Id
     private String id;
 
-    @NotNull(message = "DNI is mandatory")
-    @Size(min = 8, max = 8, message = "DNI must be 8 characters long")
+    @NotNull
+    @Size(min = 8, max = 8)
     private String dni;
 
-    @NotBlank(message = "Type customer is mandatory")
+    @NotBlank
     private String typeCustomer;
 
-    @NotNull(message = "Flag VIP is mandatory")
+    @NotNull
     private Boolean flagVip;
 
-    @NotNull(message = "Flag Pyme is mandatory")
+    @NotNull
     private Boolean flagPyme;
 
-    @NotBlank(message = "Name is mandatory")
+    @NotBlank
     private String name;
 
-    @NotBlank(message = "Surname is mandatory")
+    @NotBlank
     private String surName;
 
-    @NotBlank(message = "Address is mandatory")
+    @NotBlank
     private String address;
 
-    @NotBlank(message = "Status is mandatory")
+    @NotBlank
     private String status;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
