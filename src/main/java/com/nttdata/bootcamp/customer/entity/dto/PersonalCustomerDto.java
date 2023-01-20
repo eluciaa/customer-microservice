@@ -12,17 +12,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PersonalCustomerDto {
 
-    @NotNull(message = "DNI is mandatory")
-    @Size(min = 8, max = 8, message = "DNI must be 8 characters long")
+    @NotNull
+    @Size(min = 8, max = 8)
     private String dni;
 
-    @NotBlank(message = "Name is mandatory")
+    @NotBlank
     private String name;
 
-    @NotBlank(message = "Surname is mandatory")
+    @NotBlank
     private String surName;
 
-    @NotBlank(message = "Address is mandatory")
+    @NotBlank
     private String address;
 
 }
