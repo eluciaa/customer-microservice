@@ -17,6 +17,8 @@ public interface CustomerService {
 
     Mono<Customer> saveBusCust(BusinessCustomerDto dataCustomer);
 
+    Mono<Customer> updateAddress(Customer dataCustomer);
+
     Mono<Customer> updateStatus(Customer dataCustomer);
 
     Mono<Customer> delete(String dni);

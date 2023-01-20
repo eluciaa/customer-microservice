@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import com.nttdata.bootcamp.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.nttdata.bootcamp.customer.entity.Customer;
 import reactor.core.publisher.Flux;
@@ -28,7 +27,7 @@ public class CustomerController {
     }
 
     //Search for customers by DNI
-    @GetMapping("/find/{dni}")
+    @GetMapping("/findByDNI/{dni}")
     public Mono<Customer> findByCustomerDNI(@PathVariable("dni") String dni) {
         return customerService.findByDni(dni);
     }
@@ -43,6 +42,18 @@ public class CustomerController {
     @PostMapping(value = "/saveBusinessCustomer")
     public Mono<Customer> saveBusCust(@Valid @RequestBody BusinessCustomerDto customer) {
         return customerService.saveBusCust(customer);
+    }
+
+    //Update address customer
+    @PutMapping("/updateCustomerAddress/{dni}")
+    public Mono<Customer> updateCustomerAddress(@PathVariable("dni") String dni, @RequestBody Customer customer) {
+        return customerService.updateAddress(customer);
+    }
+
+    //Update status customer
+    @PutMapping("/updateCustomerStatus/{dni}")
+    public Mono<Customer> updateCustomerStatus(@PathVariable("dni") String dni, @RequestBody Customer customer) {
+        return customerService.updateStatus(customer);
     }
 
     //Delete customer

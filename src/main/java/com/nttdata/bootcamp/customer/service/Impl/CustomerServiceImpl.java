@@ -32,7 +32,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Mono<Customer> findByDni(String dni) {
-        log.info("Searching for customer with DNI:" + dni);
+        log.info("Searching for customer with DNI: " + dni);
         return customerRepository.findAll()
                 .filter(x -> x.getDni().equals(dni))
                 .next();
@@ -47,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
                         log.info("There is already a customer with that DNI");
                         return Mono.empty();
                     } else {
-                        log.info("Saving for personal customer " + dataCustomer.getDni());
+                        log.info("Saving for personal customer with DNI: " + dataCustomer.getDni());
 
                         Customer p = new Customer();
                         p.setDni(dataCustomer.getDni());
@@ -73,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
                         log.info("There is already a customer with that DNI");
                         return Mono.empty();
                     } else {
-                        log.info("Saving for business customer " + dataCustomer.getDni());
+                        log.info("Saving for business customer with DNI: " + dataCustomer.getDni());
 
                         Customer b = new Customer();
                         b.setDni(dataCustomer.getDni());
@@ -91,32 +91,27 @@ public class CustomerServiceImpl implements CustomerService {
                 });
     }
 
-    /*@Override
-    public Mono<Customer> updateAddress(Customer dataCustomer) {
-        Mono<Customer> customerMono = findByDni(dataCustomer.getDni());
-        try {
-            Customer customer = customerMono.block();
-            assert customer != null;
-            customer.setAddress(dataCustomer.getAddress());
-            customer.setModificationDate(dataCustomer.getModificationDate());
-            return customerRepository.save(customer);
-        }catch (Exception e){
-            return Mono.<Customer>error(new Error("The customer with DNI " + dataCustomer.getDni() + " do not exists"));
-        }
-    }*/
-
     @Override
+    public Mono<Customer> updateAddress(Customer dataCustomer) {
+        return findByDni(dataCustomer.getDni())
+                .flatMap(updCust -> {
+                    log.info("Updating address '{}' to '{}'", updCust.getAddress(), dataCustomer.getAddress());
+
+                    updCust.setAddress(dataCustomer.getAddress());
+                    updCust.setModificationDate(new Date());
+                    return customerRepository.save(updCust);
+                });
+    }
+
     public Mono<Customer> updateStatus(Customer dataCustomer) {
-        Mono<Customer> customerMono = findByDni(dataCustomer.getDni());
-        try {
-            Customer customer = customerMono.block();
-            assert customer != null;
-            customer.setStatus(dataCustomer.getStatus());
-            customer.setModificationDate(dataCustomer.getModificationDate());
-            return customerRepository.save(customer);
-        } catch (Exception e) {
-            return Mono.<Customer>error(new Error("The customer with DNI " + dataCustomer.getDni() + " do not exists"));
-        }
+        return findByDni(dataCustomer.getDni())
+                .flatMap(updCust -> {
+                    log.info("Updating for {} customer with DNI: {}", updCust.getTypeCustomer(), updCust.getDni());
+
+                    updCust.setStatus(dataCustomer.getStatus());
+                    updCust.setModificationDate(new Date());
+                    return customerRepository.save(updCust);
+                });
     }
 
     @Override
