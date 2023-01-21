@@ -63,6 +63,7 @@ public class CustomerServiceImpl implements CustomerService {
                 });
     }
 
+    @Override
     public Mono<Customer> saveBusinessCustomer(BusinessCustomerDto dataCustomer) {
         return findCustomerByDni(dataCustomer.getDni())
                 .hasElement()
@@ -90,23 +91,24 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<Customer> updateCustomerAddress(Customer dataCustomer) {
-        return findCustomerByDni(dataCustomer.getDni())
-                .flatMap(updCust -> {
-                    log.info("Updating address '{}' to '{}'", updCust.getAddress(), dataCustomer.getAddress());
-
-                    updCust.setAddress(dataCustomer.getAddress());
-                    updCust.setModificationDate(new Date());
-                    return customerRepository.save(updCust);
-                });
-    }
-
     public Mono<Customer> updateCustomerStatus(Customer dataCustomer) {
         return findCustomerByDni(dataCustomer.getDni())
                 .flatMap(updCust -> {
                     log.info("Updating for {} customer with DNI: {}", updCust.getTypeCustomer(), updCust.getDni());
 
                     updCust.setStatus(dataCustomer.getStatus());
+                    updCust.setModificationDate(new Date());
+                    return customerRepository.save(updCust);
+                });
+    }
+
+    @Override
+    public Mono<Customer> updateCustomerAddress(Customer dataCustomer) {
+        return findCustomerByDni(dataCustomer.getDni())
+                .flatMap(updCust -> {
+                    log.info("Updating address '{}' to '{}'", updCust.getAddress(), dataCustomer.getAddress());
+
+                    updCust.setAddress(dataCustomer.getAddress());
                     updCust.setModificationDate(new Date());
                     return customerRepository.save(updCust);
                 });
