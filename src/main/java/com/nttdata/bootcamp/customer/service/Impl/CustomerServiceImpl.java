@@ -23,13 +23,13 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
 
     @Override
-    public Flux<Customer> findAll() {
+    public Flux<Customer> findAllCustomers() {
         log.info("Searching for all customers");
         return customerRepository.findAll();
     }
 
     @Override
-    public Mono<Customer> findByDni(String dni) {
+    public Mono<Customer> findCustomerByDni(String dni) {
         log.info("Searching for customer with DNI: " + dni);
         return customerRepository.findAll()
                 .filter(x -> x.getDni().equals(dni))
@@ -37,8 +37,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<Customer> savePersCust(PersonalCustomerDto dataCustomer) {
-        return findByDni(dataCustomer.getDni())
+    public Mono<Customer> savePersonalCustomer(PersonalCustomerDto dataCustomer) {
+        return findCustomerByDni(dataCustomer.getDni())
                 .hasElement()
                 .flatMap(dniExists -> {
                     if (dniExists) {
@@ -63,8 +63,8 @@ public class CustomerServiceImpl implements CustomerService {
                 });
     }
 
-    public Mono<Customer> saveBusCust(BusinessCustomerDto dataCustomer) {
-        return findByDni(dataCustomer.getDni())
+    public Mono<Customer> saveBusinessCustomer(BusinessCustomerDto dataCustomer) {
+        return findCustomerByDni(dataCustomer.getDni())
                 .hasElement()
                 .flatMap(dniExists -> {
                     if (dniExists) {
@@ -90,8 +90,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<Customer> updateAddress(Customer dataCustomer) {
-        return findByDni(dataCustomer.getDni())
+    public Mono<Customer> updateCustomerAddress(Customer dataCustomer) {
+        return findCustomerByDni(dataCustomer.getDni())
                 .flatMap(updCust -> {
                     log.info("Updating address '{}' to '{}'", updCust.getAddress(), dataCustomer.getAddress());
 
@@ -101,8 +101,8 @@ public class CustomerServiceImpl implements CustomerService {
                 });
     }
 
-    public Mono<Customer> updateStatus(Customer dataCustomer) {
-        return findByDni(dataCustomer.getDni())
+    public Mono<Customer> updateCustomerStatus(Customer dataCustomer) {
+        return findCustomerByDni(dataCustomer.getDni())
                 .flatMap(updCust -> {
                     log.info("Updating for {} customer with DNI: {}", updCust.getTypeCustomer(), updCust.getDni());
 
@@ -113,9 +113,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Mono<Customer> delete(String dni) {
+    public Mono<Customer> deleteCustomer(String dni) {
         log.info("Deleting client by DNI: " + dni);
-        return findByDni(dni)
+        return findCustomerByDni(dni)
                 .flatMap(customer -> customerRepository.delete(customer).then(Mono.just(customer)));
     }
 

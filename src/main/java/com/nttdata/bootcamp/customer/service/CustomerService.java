@@ -9,18 +9,18 @@ import reactor.core.publisher.Mono;
 //Interface Service
 public interface CustomerService {
 
-    Flux<Customer> findAll();
+    Flux<Customer> findAllCustomers();
 
-    Mono<Customer> findByDni(String dni);
+    Mono<Customer> findCustomerByDni(String dni);
 
-    Mono<Customer> savePersCust(PersonalCustomerDto dataCustomer);
+    Mono<Customer> savePersonalCustomer(PersonalCustomerDto dataCustomer);
 
-    Mono<Customer> saveBusCust(BusinessCustomerDto dataCustomer);
+    Mono<Customer> saveBusinessCustomer(BusinessCustomerDto dataCustomer);
 
-    Mono<Customer> updateAddress(Customer dataCustomer);
+    Mono<Customer> updateCustomerAddress(Customer dataCustomer);
 
-    Mono<Customer> updateStatus(Customer dataCustomer);
+    Mono<Customer> updateCustomerStatus(Customer dataCustomer);
 
-    Mono<Customer> delete(String dni);
+    Mono<Customer> deleteCustomer(String dni);
 
 }

@@ -21,45 +21,45 @@ public class CustomerController {
     private CustomerService customerService;
 
     //Customer search
-    @GetMapping("/")
-    public Flux<Customer> findAll() {
-        return customerService.findAll();
+    @GetMapping("/findAll")
+    public Flux<Customer> findAllCustomers() {
+        return customerService.findAllCustomers();
     }
 
     //Search for customers by DNI
-    @GetMapping("/findByDNI/{dni}")
-    public Mono<Customer> findByCustomerDNI(@PathVariable("dni") String dni) {
-        return customerService.findByDni(dni);
+    @GetMapping("/findByDni/{dni}")
+    public Mono<Customer> findCustomerByDni(@PathVariable("dni") String dni) {
+        return customerService.findCustomerByDni(dni);
     }
 
     //Save personal customer
     @PostMapping(value = "/savePersonalCustomer")
-    public Mono<Customer> savePersCust(@Valid @RequestBody PersonalCustomerDto customer) {
-        return customerService.savePersCust(customer);
+    public Mono<Customer> savePersonalCustomer(@Valid @RequestBody PersonalCustomerDto customer) {
+        return customerService.savePersonalCustomer(customer);
     }
 
     //Save business customer
     @PostMapping(value = "/saveBusinessCustomer")
-    public Mono<Customer> saveBusCust(@Valid @RequestBody BusinessCustomerDto customer) {
-        return customerService.saveBusCust(customer);
+    public Mono<Customer> saveBusinessCustomer(@Valid @RequestBody BusinessCustomerDto customer) {
+        return customerService.saveBusinessCustomer(customer);
     }
 
-    //Update address customer
-    @PutMapping("/updateCustomerAddress/{dni}")
-    public Mono<Customer> updateCustomerAddress(@PathVariable("dni") String dni, @RequestBody Customer customer) {
-        return customerService.updateAddress(customer);
-    }
-
-    //Update status customer
-    @PutMapping("/updateCustomerStatus/{dni}")
+    //Update customer status
+    @PutMapping("/updateStatus/{dni}")
     public Mono<Customer> updateCustomerStatus(@PathVariable("dni") String dni, @RequestBody Customer customer) {
-        return customerService.updateStatus(customer);
+        return customerService.updateCustomerStatus(customer);
+    }
+
+    //Update customer address
+    @PutMapping("/updateAddress/{dni}")
+    public Mono<Customer> updateCustomerAddress(@PathVariable("dni") String dni, @RequestBody Customer customer) {
+        return customerService.updateCustomerAddress(customer);
     }
 
     //Delete customer
     @DeleteMapping("/delete/{dni}")
     public Mono<Customer> deleteCustomer(@PathVariable("dni") String dni) {
-        return customerService.delete(dni);
+        return customerService.deleteCustomer(dni);
     }
 
 }
