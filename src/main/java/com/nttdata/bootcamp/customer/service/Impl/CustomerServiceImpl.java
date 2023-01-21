@@ -6,6 +6,7 @@ import com.nttdata.bootcamp.customer.entity.dto.PersonalCustomerDto;
 import com.nttdata.bootcamp.customer.repository.CustomerRepository;
 import com.nttdata.bootcamp.customer.service.CustomerService;
 import com.nttdata.bootcamp.customer.util.Constant;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +16,11 @@ import reactor.core.publisher.Mono;
 import java.util.Date;
 
 @Slf4j
+@AllArgsConstructor
 @Service
 public class CustomerServiceImpl implements CustomerService {
     @Autowired
-    private final CustomerRepository customerRepository;
-
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
+    private CustomerRepository customerRepository;
 
     @Override
     public Flux<Customer> findAll() {
