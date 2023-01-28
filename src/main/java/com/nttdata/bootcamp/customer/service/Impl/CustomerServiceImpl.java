@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.customer.service.Impl;
+package com.nttdata.bootcamp.customer.service.impl;
 
 import com.nttdata.bootcamp.customer.entity.Customer;
 import com.nttdata.bootcamp.customer.entity.dto.BusinessCustomerDto;
@@ -6,14 +6,13 @@ import com.nttdata.bootcamp.customer.entity.dto.PersonalCustomerDto;
 import com.nttdata.bootcamp.customer.repository.CustomerRepository;
 import com.nttdata.bootcamp.customer.service.CustomerService;
 import com.nttdata.bootcamp.customer.util.Constant;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Date;
 
 @Slf4j
 @AllArgsConstructor

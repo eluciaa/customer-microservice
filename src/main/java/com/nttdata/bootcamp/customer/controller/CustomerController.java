@@ -1,13 +1,13 @@
 package com.nttdata.bootcamp.customer.controller;
 
+import com.nttdata.bootcamp.customer.entity.Customer;
 import com.nttdata.bootcamp.customer.entity.dto.BusinessCustomerDto;
 import com.nttdata.bootcamp.customer.entity.dto.PersonalCustomerDto;
+import com.nttdata.bootcamp.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import com.nttdata.bootcamp.customer.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.nttdata.bootcamp.customer.entity.Customer;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

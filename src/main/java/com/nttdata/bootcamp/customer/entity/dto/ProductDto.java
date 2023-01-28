@@ -1,6 +1,9 @@
 package com.nttdata.bootcamp.customer.entity.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +20,7 @@ public class ProductDto {
     @NotBlank
     private String typeCustomer;
 
-    @Pattern(regexp = "\\d{10}")
+    @NotNull
     private String accountNumber;
 
     @NotBlank
