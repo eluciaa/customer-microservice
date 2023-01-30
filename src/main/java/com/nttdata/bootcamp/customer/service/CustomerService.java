@@ -11,6 +11,8 @@ public interface CustomerService {
 
     Flux<Customer> findAllCustomers();
 
+    Mono<Customer> findCustomerById(String id);
+
     Mono<Customer> findCustomerByDni(String dni);
 
     Mono<Customer> savePersonalCustomer(PersonalCustomerDto dataCustomer);

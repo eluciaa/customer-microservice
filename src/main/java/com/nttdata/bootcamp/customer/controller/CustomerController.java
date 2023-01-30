@@ -27,6 +27,13 @@ public class CustomerController {
         return customerService.findAllCustomers();
     }
 
+    //Search for customers by ID
+    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackFindCustomerById")
+    @GetMapping("/findById/{id}")
+    public Mono<Customer> findCustomerById(@PathVariable("id") String id) {
+        return customerService.findCustomerById(id);
+    }
+
     //Search for customers by DNI
     @CircuitBreaker(name = "customer", fallbackMethod = "fallBackFindCustomerByDni")
     @GetMapping("/findByDni/{dni}")
