@@ -27,29 +27,22 @@ public class CustomerController {
         return customerService.findAllCustomers();
     }
 
-    //Search for customers by ID
-    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackFindCustomerById")
-    @GetMapping("/findById/{id}")
-    public Mono<Customer> findCustomerById(@PathVariable("id") String id) {
-        return customerService.findCustomerById(id);
-    }
-
     //Search for customers by DNI
-    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackFindCustomerByDni")
+    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackCustomer")
     @GetMapping("/findByDni/{dni}")
     public Mono<Customer> findCustomerByDni(@PathVariable("dni") String dni) {
         return customerService.findCustomerByDni(dni);
     }
 
     //Save personal customer
-    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackSavePersonalCustomer")
+    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackCustomer")
     @PostMapping(value = "/savePersonalCustomer")
     public Mono<Customer> savePersonalCustomer(@Valid @RequestBody PersonalCustomerDto customer) {
         return customerService.savePersonalCustomer(customer);
     }
 
     //Save business customer
-    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackSaveBusinessCustomer")
+    @CircuitBreaker(name = "customer", fallbackMethod = "fallBackCustomer")
     @PostMapping(value = "/saveBusinessCustomer")
     public Mono<Customer> saveBusinessCustomer(@Valid @RequestBody BusinessCustomerDto customer) {
         return customerService.saveBusinessCustomer(customer);
@@ -71,6 +64,10 @@ public class CustomerController {
     @DeleteMapping("/delete/{dni}")
     public Mono<Customer> deleteCustomer(@PathVariable("dni") String dni) {
         return customerService.deleteCustomer(dni);
+    }
+
+    public Mono<String> fallBackCustomer(RuntimeException runtimeException){
+        return Mono.just("Customer Microservice is not responding");
     }
 
 }
