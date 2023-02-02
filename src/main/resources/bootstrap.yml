@@ -1,6 +1,8 @@
 spring:
   application:
     name: customer
+  config:
+    import: "optional:configserver:https://ms-configserver-team.azurewebsites.net"
   cloud:
     config:
       enabled: true
