@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.customer.service.impl;
+package com.nttdata.bootcamp.customer.service.Impl;
 
 import com.nttdata.bootcamp.customer.entity.Customer;
 import com.nttdata.bootcamp.customer.entity.dto.BusinessCustomerDto;
@@ -25,12 +25,6 @@ public class CustomerServiceImpl implements CustomerService {
     public Flux<Customer> findAllCustomers() {
         log.info("Searching for all customers");
         return customerRepository.findAll();
-    }
-
-    @Override
-    public Mono<Customer> findCustomerById(String id) {
-        log.info("Searching for customer with ID: " + id);
-        return customerRepository.findById(id);
     }
 
     @Override
@@ -125,5 +119,10 @@ public class CustomerServiceImpl implements CustomerService {
         return findCustomerByDni(dni)
                 .flatMap(customer -> customerRepository.delete(customer).then(Mono.just(customer)));
     }
+
+	@Override
+	public Mono<Customer> getCustomerById(String id) {
+		return customerRepository.findById(id);
+	}
 
 }
