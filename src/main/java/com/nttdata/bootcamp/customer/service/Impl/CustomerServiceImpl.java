@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.customer.service.Impl;
+package com.nttdata.bootcamp.customer.service.impl;
 
 import com.nttdata.bootcamp.customer.entity.Customer;
 import com.nttdata.bootcamp.customer.entity.dto.BusinessCustomerDto;
@@ -119,10 +119,5 @@ public class CustomerServiceImpl implements CustomerService {
         return findCustomerByDni(dni)
                 .flatMap(customer -> customerRepository.delete(customer).then(Mono.just(customer)));
     }
-
-	@Override
-	public Mono<Customer> getCustomerById(String id) {
-		return customerRepository.findById(id);
-	}
 
 }
