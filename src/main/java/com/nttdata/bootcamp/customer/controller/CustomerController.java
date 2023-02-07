@@ -49,14 +49,14 @@ public class CustomerController {
     }
 
     //Update customer status
-    @PutMapping("/updateStatus/{dni}")
-    public Mono<Customer> updateCustomerStatus(@PathVariable("dni") String dni, @RequestBody Customer customer) {
+    @PutMapping("/updateStatus")
+    public Mono<Customer> updateCustomerStatus(@RequestBody Customer customer) {
         return customerService.updateCustomerStatus(customer);
     }
 
     //Update customer address
-    @PutMapping("/updateAddress/{dni}")
-    public Mono<Customer> updateCustomerAddress(@PathVariable("dni") String dni, @RequestBody Customer customer) {
+    @PutMapping("/updateAddress")
+    public Mono<Customer> updateCustomerAddress(@RequestBody Customer customer) {
         return customerService.updateCustomerAddress(customer);
     }
 
@@ -65,10 +65,14 @@ public class CustomerController {
     public Mono<Customer> deleteCustomer(@PathVariable("dni") String dni) {
         return customerService.deleteCustomer(dni);
     }
-    
+
     @GetMapping("/{id}")
     public Mono<Customer> getCustomerById(@PathVariable("id") String id) {
         return customerService.getCustomerById(id);
+    }
+
+    public Mono<String> fallBackCustomer(RuntimeException runtimeException){
+        return Mono.just("Customer Microservice is not responding");
     }
 
 }

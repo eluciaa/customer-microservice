@@ -120,4 +120,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .flatMap(customer -> customerRepository.delete(customer).then(Mono.just(customer)));
     }
 
+    @Override
+    public Mono<Customer> getCustomerById(String id) {
+        return customerRepository.findById(id);
+    }
+
 }
